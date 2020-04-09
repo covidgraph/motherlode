@@ -92,9 +92,9 @@ def run_datasource_containers():
     # gather env vars
     env_vars = {}
     try:
-        env_vars[ENV] = os.environ["ENV"]
+        env_vars["ENV"] = os.environ["ENV"]
     except:
-        env_vars[ENV] = "DEV"
+        env_vars["ENV"] = "DEV"
     if config.NEO4J_URL is not None:
         env_vars["GC_NEO4J_URL"] = config.NEO4J_URL
     if config.NEO4J_USER is not None:
@@ -121,5 +121,6 @@ def run_datasource_containers():
 
 
 if __name__ == "__main__":
-    # pull_images()
+    pull_images()
     run_datasource_containers()
+    # print(config.NEO4J_URL)
