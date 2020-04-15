@@ -19,7 +19,7 @@ class DEFAULT(ConfigBase):
     # If you want to rerun all dataloaders that allready did run (and did not changed its ID), set FORCE_RERUN_PASSED_DATALOADERS to True
     FORCE_RERUN_PASSED_DATALOADERS = False
 
-    OTHER_ENV_IN_DOCKER_CONTAINERS = {"DATA_BASE_DIR": "FCUK"}
+    OTHER_ENV_IN_DOCKER_CONTAINERS = {}
 
     # DOCKER_DEAMON_BASE_URL = "tcp://127.0.0.1:1234"
     DOCKER_DEAMON_BASE_URL = "unix://var/run/docker.sock"
