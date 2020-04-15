@@ -2,8 +2,10 @@ import os
 import sys
 import logging
 import docker
+import py2neo
 from atexit import register
 from Configs import getConfig
+import datetime
 
 config = getConfig()
 log = logging.getLogger(__name__)
@@ -23,11 +25,39 @@ from motherlode.data_sources_registry import DataSourcesRegistry
 docker_client = docker.DockerClient(base_url=config.DOCKER_DEAMON_BASE_URL)
 
 
+def create_log_node(dataloader_name, image):
+    n = py2neo.Node("LoadingLog")
+    n["loader"] = dataloader_name
+    n["dockerhub_image_name"] = image.tags[0]
+    n["dockerhub_image_hash"] = image.id
+    n["loading_finished_at"] = str(datetime.datetime.now(tz=None))
+    tx = config.get_graph().begin()
+    tx.create(n)
+    tx.commit()
+
+
+def get_log_nodes(dataloader_name, image):
+    return list(
+        py2neo.NodeMatcher(config.get_graph()).match(
+            "LoadingLog",
+            dockerhub_image_name=image.tags[0],
+            dockerhub_image_hash=image.id,
+        )
+    )
+
+
 def exit_func():
     # Clean up containers
     for datasource in get_sorted_data_sources(DataSourcesRegistry):
         name = "ML_{}".format(datasource["name"])
         clean_up_container(name)
+
+
+register(exit_func)
+
+
+def create_log_dir():
+    os.makedirs(config.LOADING_LOGS_DIRECTORY, exist_ok=True)
 
 
 def clean_up_container(name):
@@ -41,9 +71,6 @@ def clean_up_container(name):
         c.remove()
     except docker.errors.NotFound:
         pass
-
-
-register(exit_func)
 
 
 def get_sorted_data_sources(datasources_unsorted):
@@ -87,8 +114,16 @@ def pull_images():
         log.info("...image '{}' pulled.".format(datasource["dockerimage"]))
 
 
-def run_datasource_containers():
+def absolute_volume_path(volumes):
+    absolute_volumes = {}
+    for vol, mount in volumes.items():
+        if vol.startswith("."):
+            absolute_volumes[os.path.abspath(vol)] = mount
+    return absolute_volumes
 
+
+def run_datasource_containers():
+    create_log_dir()
     # gather env vars
     env_vars = {}
     try:
@@ -104,20 +139,51 @@ def run_datasource_containers():
     env_vars.update(config.OTHER_ENV_IN_DOCKER_CONTAINERS.items())
 
     for datasource in get_sorted_data_sources(DataSourcesRegistry):
+
+        envs = env_vars.copy()
+        if "envs" in datasource:
+            envs.update(datasource["envs"])
         log.info("###########################".format(datasource["dockerimage"]))
         container_name = "ML_{}".format(datasource["name"])
         log.info("Run Datasource container '{}'...".format(datasource["dockerimage"]))
         clean_up_container(container_name)
+        image = docker_client.images.get(datasource["dockerimage"])
+        log_nodes = get_log_nodes(datasource["name"], image)
+        if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
+            # we skip this dataloader as it allready did a run
+            log.info(
+                "[{}]: Skip Dataloader. Did allready run at {}".format(
+                    datasource["name"], log_nodes[0]["loading_finished_at"]
+                )
+            )
+            continue
         container = docker_client.containers.run(
-            datasource["dockerimage"],
-            environment=env_vars,
+            image,
+            environment=envs,
             detach=True,
             name=container_name,
+            volumes=absolute_volume_path(datasource["volumes"]),
+        )
+        log_file_path = os.path.join(
+            config.LOADING_LOGS_DIRECTORY, "{}.log".format(datasource["name"])
         )
         for l in container.logs(
             stream=True, timestamps=True, follow=True, stderr=True, stdout=True
         ):
             log.info("[{}]: {}".format(datasource["name"], l.decode()))
+            log_file = open(log_file_path, "a")
+            log_file.write(l.decode())
+            log_file.close()
+        res = container.wait()
+
+        log_file = open(log_file_path, "a")
+        log_file.write("================================================")
+        log_file.write("EXITED with status: {}".format(res))
+        log_file.close()
+        log.info("[{}]: Finished with Exit Code:".format(res["StatusCode"]))
+        if res["StatusCode"] != 0 and not config.CONTINUE_WHEN_ONE_DATALOADER_FAILS:
+            log.error("[{}]: Cancel Motherlode:".format(datasource["name"]))
+            exit(res["StatusCode"])
 
 
 if __name__ == "__main__":
