@@ -6,7 +6,7 @@ DataSourcesRegistry = [
         "dockerimage": "covidgraph/data-cord19",
         "dependencies": [],
         "exlude_in_env": ["PROD"],
-        "envs": {"CONFIGS_PAPER_BATCH_SIZE":"100", "NO_OF_PROCESSES":"3"},
+        "envs": {"CONFIGS_PAPER_BATCH_SIZE":"500", "NO_OF_PROCESSES":"4"},
         "volumes": {'./dataset/CORD19': {'bind': '/app/dataset', 'mode': 'rw'}}
     },
     {
