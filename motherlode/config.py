@@ -9,7 +9,7 @@ class DEFAULT(ConfigBase):
     # Always create a DEFAULT class and use it as the base class for other environments classes
     NEO4J_URL = "bolt://localhost:7687"
     NEO4J_USER = "neo4j"
-    NEO4J_PW = "test"  #
+    NEO4J_PASSWORD = "test"  #
 
     CONTINUE_WHEN_ONE_DATALOADER_FAILS = False
 
@@ -23,14 +23,6 @@ class DEFAULT(ConfigBase):
 
     # DOCKER_DEAMON_BASE_URL = "tcp://127.0.0.1:1234"
     DOCKER_DEAMON_BASE_URL = "unix://var/run/docker.sock"
-
-    def get_graph(self):
-        if self.NEO4J_USER is not None:
-            return py2neo.Graph(
-                self.NEO4J_URL, password=self.NEO4J_PASSWORD, user=self.NEO4J_USER
-            )
-        else:
-            return py2neo.Graph(self.NEO4J_URL)
 
 
 # All following config classes inherit from DEFAULT

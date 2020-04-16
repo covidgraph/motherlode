@@ -25,20 +25,29 @@ from motherlode.data_sources_registry import DataSourcesRegistry
 docker_client = docker.DockerClient(base_url=config.DOCKER_DEAMON_BASE_URL)
 
 
+def get_graph():
+    if config.NEO4J_USER is not None:
+        return py2neo.Graph(
+            config.NEO4J_URL, password=config.NEO4J_PASSWORD, user=config.NEO4J_USER
+        )
+    else:
+        return py2neo.Graph(config.NEO4J_URL)
+
+
 def create_log_node(dataloader_name, image):
     n = py2neo.Node("LoadingLog")
     n["loader"] = dataloader_name
     n["dockerhub_image_name"] = image.tags[0]
     n["dockerhub_image_hash"] = image.id
     n["loading_finished_at"] = str(datetime.datetime.now(tz=None))
-    tx = config.get_graph().begin()
+    tx = get_graph().begin()
     tx.create(n)
     tx.commit()
 
 
 def get_log_nodes(dataloader_name, image):
     return list(
-        py2neo.NodeMatcher(config.get_graph()).match(
+        py2neo.NodeMatcher(get_graph()).match(
             "LoadingLog",
             dockerhub_image_name=image.tags[0],
             dockerhub_image_hash=image.id,
@@ -123,6 +132,7 @@ def absolute_volume_path(volumes):
 
 
 def run_datasource_containers():
+
     create_log_dir()
     # gather env vars
     env_vars = {}
@@ -134,8 +144,8 @@ def run_datasource_containers():
         env_vars["GC_NEO4J_URL"] = config.NEO4J_URL
     if config.NEO4J_USER is not None:
         env_vars["GC_NEO4J_USER"] = config.NEO4J_USER
-    if config.NEO4J_PW is not None:
-        env_vars["GC_NEO4J_PASSWORD"] = config.NEO4J_PW
+    if config.NEO4J_PASSWORD is not None:
+        env_vars["GC_NEO4J_PASSWORD"] = config.NEO4J_PASSWORD
     env_vars.update(config.OTHER_ENV_IN_DOCKER_CONTAINERS.items())
 
     for datasource in get_sorted_data_sources(DataSourcesRegistry):
