@@ -34,7 +34,6 @@ def get_graph():
         return py2neo.Graph(config.NEO4J_URL)
 
 
-
 def create_log_node(dataloader_name, image):
     n = py2neo.Node("LoadingLog")
     n["loader"] = dataloader_name
@@ -156,9 +155,11 @@ def run_datasource_containers():
         log.info("###########################".format(datasource["dockerimage"]))
         container_name = "ML_{}".format(datasource["name"])
         log.info("Run Datasource container '{}'...".format(datasource["dockerimage"]))
+
         clean_up_container(container_name)
         pull_image(datasource["dockerimage"])
         image = docker_client.images.get(datasource["dockerimage"])
+        log.info("'{}' using image '{}'".format(datasource["dockerimage"], image.id))
         log_nodes = get_log_nodes(datasource["name"], image)
         if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
             # we skip this dataloader as it allready did a run
