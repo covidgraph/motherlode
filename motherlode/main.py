@@ -34,6 +34,7 @@ def get_graph():
         return py2neo.Graph(config.NEO4J_URL)
 
 
+
 def create_log_node(dataloader_name, image):
     n = py2neo.Node("LoadingLog")
     n["loader"] = dataloader_name
