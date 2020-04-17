@@ -116,11 +116,10 @@ def get_sorted_data_sources(datasources_unsorted):
     return sorted_datasources
 
 
-def pull_images():
-    for datasource in get_sorted_data_sources(DataSourcesRegistry):
-        log.info("Pull image '{}'...".format(datasource["dockerimage"]))
-        docker_client.images.pull(datasource["dockerimage"])
-        log.info("...image '{}' pulled.".format(datasource["dockerimage"]))
+def pull_image(image_name):
+    log.info("Pull image '{}'...".format(image_name))
+    docker_client.images.pull(image_name)
+    log.info("...image '{}' pulled.".format(image_name))
 
 
 def absolute_volume_path(volumes):
@@ -157,6 +156,7 @@ def run_datasource_containers():
         container_name = "ML_{}".format(datasource["name"])
         log.info("Run Datasource container '{}'...".format(datasource["dockerimage"]))
         clean_up_container(container_name)
+        pull_image(datasource["dockerimage"])
         image = docker_client.images.get(datasource["dockerimage"])
         log_nodes = get_log_nodes(datasource["name"], image)
         if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
@@ -167,6 +167,7 @@ def run_datasource_containers():
                 )
             )
             continue
+
         container = docker_client.containers.run(
             image,
             environment=envs,
@@ -194,9 +195,10 @@ def run_datasource_containers():
         if res["StatusCode"] != 0 and not config.CONTINUE_WHEN_ONE_DATALOADER_FAILS:
             log.error("[{}]: Cancel Motherlode:".format(datasource["name"]))
             exit(res["StatusCode"])
+        else:
+            create_log_node(dataloader_name=datasource["name"], image=image)
 
 
 if __name__ == "__main__":
-    pull_images()
     run_datasource_containers()
     # print(config.NEO4J_URL)
