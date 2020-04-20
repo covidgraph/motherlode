@@ -32,5 +32,13 @@ DataSourcesRegistry = [
         "exlude_in_env": [],
         "envs": {},
         "volumes": {}
+    },
+    {
+        "name": "CELLMAP_ANNOTATION",
+        "dockerimage": "covidgraph/cellmap_data_annotation",
+        "dependencies": ['CELLMAP'],
+        "exlude_in_env": [],
+        "envs": {},
+        "volumes": {}
     }
 ]
