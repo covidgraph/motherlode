@@ -19,7 +19,7 @@ Scope of Motherlode is
 
 * Resolving dependencies of dataloaders
 
-* Keep track of which dataloaders allready fed the graph
+* Keep track of which dataloaders are allready fed in the graph
 
 * Keep track of versions of the dataloaders
 
