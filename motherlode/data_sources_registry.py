@@ -5,7 +5,7 @@ DataSourcesRegistry = [
         "name": "CORD19",
         "dockerimage": "covidgraph/data-cord19",
         "dependencies": [],
-        "exlude_in_env": ["PROD"],
+        "exlude_in_env": [],
         "envs": {"CONFIGS_PAPER_BATCH_SIZE":"200", "CONFIGS_NO_OF_PROCESSES":"25"},
         "volumes": {'./dataset/CORD19': {'bind': '/app/dataset', 'mode': 'rw'}}
     },
@@ -40,5 +40,13 @@ DataSourcesRegistry = [
         "exlude_in_env": [],
         "envs": {},
         "volumes": {}
+    },
+    {
+        "name": "LENS_PATENT_DATA",
+        "dockerimage": "covidgraph/data-lens-org-covid19-patents",
+        "dependencies": [],
+        "exlude_in_env": [],
+        "envs": {},
+        "volumes": {'./dataset/LENS_PATENT_DATA': {'bind': '/app/dataset', 'mode': 'rw'}}
     }
 ]
