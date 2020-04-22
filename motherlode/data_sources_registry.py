@@ -3,7 +3,7 @@
 DataSourcesRegistry = [
     {
         "name": "CORD19",
-        "dockerimage": "covidgraph/data-cord19:latest",
+        "dockerimage": "covidgraph/data-cord19",
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {"CONFIGS_PAPER_BATCH_SIZE":"300", "CONFIGS_NO_OF_PROCESSES":"25"},
@@ -20,7 +20,7 @@ DataSourcesRegistry = [
     {
         "name": "TEXT_FRAGGER",
         "dockerimage": "covidgraph/graph-processing_fragmentize_text",
-        "dependencies": ["CORD19"],
+        "dependencies": ["CORD19","LENS_PATENT_DATA"],
         "exlude_in_env": [],
         "envs": {},
         "volumes": {}
