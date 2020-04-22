@@ -13,7 +13,7 @@ covidgraph.org is a project with the aim to build a knowledge graph around data 
 
 The graph is fed by many independet scripts or scripts that are building on each other (called **dataloaders** here)
 
-Motherlode helps to load these scripts in the correct sequence.
+Motherlode helps to load these dataloaders in the correct sequence.
 
 Scope of Motherlode is
 
