@@ -21,7 +21,7 @@ Scope of Motherlode is
 
 * Keep track of which dataloaders are allready fed in the graph
 
-* Keep track of versions of the dataloaders
+* Keep track of versions of the dataloaders (and rerun if updated)
 
 # How?
 
