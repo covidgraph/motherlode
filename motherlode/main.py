@@ -159,7 +159,7 @@ def run_datasource_containers():
         clean_up_container(container_name)
         pull_image(datasource["dockerimage"])
         image = docker_client.images.get(datasource["dockerimage"])
-        log.info("'{}' using image '{}'".format(datasource["dockerimage"], image.id))
+        log.info("'{}' using image '{}'".format(image.tags[0], image.id))
         log_nodes = get_log_nodes(datasource["name"], image)
         if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
             # we skip this dataloader as it allready did a run
