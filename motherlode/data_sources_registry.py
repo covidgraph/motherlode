@@ -3,7 +3,7 @@
 DataSourcesRegistry = [
     {
         "name": "CORD19",
-        "dockerimage": "covidgraph/data-cord19",
+        "dockerimage": "covidgraph/data-cord19:latest",
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {"CONFIGS_PAPER_BATCH_SIZE":"300", "CONFIGS_NO_OF_PROCESSES":"25"},
