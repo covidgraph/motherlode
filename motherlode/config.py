@@ -21,6 +21,11 @@ class DEFAULT(ConfigBase):
 
     OTHER_ENV_IN_DOCKER_CONTAINERS = {}
 
+    # this can be used to overwrite registry dataloader sequence. if you want to only run a certain dataloader for exmaple
+    DATALOADER_LIST = None
+    # similar to DATALOADER_LIST but only to run a single dataloader. overrides DATALOADER_LIST
+    DATALOADER_SINGLE = None
+
     # DOCKER_DEAMON_BASE_URL = "tcp://127.0.0.1:1234"
     DOCKER_DEAMON_BASE_URL = "unix://var/run/docker.sock"
 
@@ -36,3 +41,4 @@ class DEV(DEFAULT):
 
 class LOCAL(DEFAULT):
     pass
+    # DATALOADER_LIST = ["CORD19"]

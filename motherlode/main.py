@@ -93,6 +93,19 @@ def get_sorted_data_sources(datasources_unsorted):
         current_env = os.environ["ENV"]
     except:
         current_env = "DEV"
+    if config.DATALOADER_LIST:
+        # filter out non listed datasources
+        datasources_unsorted = [
+            datasource
+            for datasource in datasources_unsorted
+            if datasource["name"] in config.DATALOADER_LIST
+        ]
+    if config.DATALOADER_SINGLE:
+        datasources_unsorted = [
+            datasource
+            for datasource in datasources_unsorted
+            if datasource["name"] == config.DATALOADER_SINGLE
+        ]
 
     def add_data_source(datasource):
         for index, dep in enumerate(datasource["dependencies"]):
@@ -120,7 +133,10 @@ def get_sorted_data_sources(datasources_unsorted):
 
 def pull_image(image_name):
     log.info("Pull image '{}'...".format(image_name))
-    docker_client.images.remove(image_name)
+    try:
+        docker_client.images.remove(image_name)
+    except docker.errors.ImageNotFound:
+        pass
     docker_client.images.pull(image_name, tag="latest")
     log.info("...image '{}' pulled.".format(image_name))
 
