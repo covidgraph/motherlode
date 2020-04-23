@@ -38,6 +38,7 @@ def create_log_node(dataloader_name, image):
     n = py2neo.Node("LoadingLog")
     n["loader"] = dataloader_name
     n["dockerhub_image_name"] = image.tags[0].split(":")[0]
+    n["dockerhub_image_tag"] = image.tags[0].split(":")[1]
     n["dockerhub_image_hash"] = image.id
     n["loading_finished_at"] = str(datetime.datetime.now(tz=None))
     tx = get_graph().begin()
@@ -50,6 +51,7 @@ def get_log_nodes(dataloader_name, image):
         py2neo.NodeMatcher(get_graph()).match(
             "LoadingLog",
             dockerhub_image_name=image.tags[0].split(":")[0],
+            dockerhub_image_tag=image.tags[0].split(":")[1],
             dockerhub_image_hash=image.id,
         )
     )
@@ -118,7 +120,8 @@ def get_sorted_data_sources(datasources_unsorted):
 
 def pull_image(image_name):
     log.info("Pull image '{}'...".format(image_name))
-    docker_client.images.pull(image_name)
+    docker_client.images.remove(image_name)
+    docker_client.images.pull(image_name, tag="latest")
     log.info("...image '{}' pulled.".format(image_name))
 
 
@@ -158,6 +161,7 @@ def run_datasource_containers():
 
         clean_up_container(container_name)
         pull_image(datasource["dockerimage"])
+
         image = docker_client.images.get(datasource["dockerimage"])
         log.info("'{}' using image '{}'".format(image.tags[0], image.id))
         log_nodes = get_log_nodes(datasource["name"], image)
