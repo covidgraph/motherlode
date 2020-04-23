@@ -106,6 +106,7 @@ def get_sorted_data_sources(datasources_unsorted):
             for datasource in datasources_unsorted
             if datasource["name"] == config.DATALOADER_SINGLE
         ]
+        return datasources_unsorted
 
     def add_data_source(datasource):
         for index, dep in enumerate(datasource["dependencies"]):
