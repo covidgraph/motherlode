@@ -51,4 +51,12 @@ DataSourcesRegistry = [
         "envs": {},
         "volumes": {}
     },
+    {
+        "name": "TEXT_GENE_MATCH",
+        "dockerimage": "covidgraph/graph-processing_text_gene_match",
+        "dependencies": ["CORD19", "LENS_PATENT_DATA", "CELLMAP", "TEXT_FRAGGER"],
+        "exlude_in_env": [],
+        "envs": {},
+        "volumes": {}
+    },
 ]
