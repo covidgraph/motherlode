@@ -132,12 +132,14 @@ def get_sorted_data_sources(datasources_unsorted):
     return sorted_datasources
 
 
-def pull_image(image_name):
+def pull_image(image_name, force = True):
     log.info("Pull image '{}'...".format(image_name))
-    try:
-        docker_client.images.remove(image_name)
-    except docker.errors.ImageNotFound:
-        pass
+    if force:
+        log.info("... pull forced, removing old image")
+        try:
+            docker_client.images.remove(image_name)
+        except docker.errors.ImageNotFound:
+            pass
     docker_client.images.pull(image_name, tag="latest")
     log.info("...image '{}' pulled.".format(image_name))
 
@@ -167,6 +169,8 @@ def run_datasource_containers():
         env_vars["GC_NEO4J_PASSWORD"] = config.NEO4J_PASSWORD
     env_vars.update(config.OTHER_ENV_IN_DOCKER_CONTAINERS.items())
 
+    log.info("force pull? {}".format(config.DOCKER_FORCE_FRESH_PULL))
+
     for datasource in get_sorted_data_sources(DataSourcesRegistry):
 
         envs = env_vars.copy()
@@ -177,15 +181,17 @@ def run_datasource_containers():
         log.info("Run Datasource container '{}'...".format(datasource["dockerimage"]))
 
         clean_up_container(container_name)
-        pull_image(datasource["dockerimage"])
+        pull_image(datasource["dockerimage"], config.DOCKER_FORCE_FRESH_PULL)
 
         image = docker_client.images.get(datasource["dockerimage"])
         log.info("'{}' using image '{}'".format(image.tags[0], image.id))
+        log.info("  envs: {}".format(envs))
+
         log_nodes = get_log_nodes(datasource["name"], image)
         if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
-            # we skip this dataloader as it allready did a run
+            # we skip this dataloader as it already did a run
             log.info(
-                "[{}]: Skip Dataloader. Did allready run at {}".format(
+                "[{}]: Skip Dataloader. Did already run at {}".format(
                     datasource["name"], log_nodes[0]["loading_finished_at"]
                 )
             )
