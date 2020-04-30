@@ -5,6 +5,13 @@ Pipeline for running all dataloader scripts for covidgraph in a controlled manne
 
 Maintainer: Tim Bleimehl @tim.bleimehl:meet.dzd-ev.de https://github.com/motey
 
+# TL; DR
+Run then complete pipeline against your own DB:
+* change the DB connection in env/DEFAULT.env
+* run
+```
+python main.py
+```
 
 
 # What?
