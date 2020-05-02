@@ -11,7 +11,7 @@ class DEFAULT(ConfigBase):
     NEO4J_USER = "neo4j"
     NEO4J_PASSWORD = "test"
 
-    CONTINUE_WHEN_ONE_DATALOADER_FAILS = False
+    CONTINUE_WHEN_ONE_DATALOADER_FAILS = True
 
     # Motherlode will create nodes in the Neo4j DB with the label :LoadingLog every time a dataloader runs.
     # If a dataloader already did a run, a reload is usally not necessary and Motherlode will skip the dataloader.
@@ -29,7 +29,7 @@ class DEFAULT(ConfigBase):
     # DOCKER_DEAMON_BASE_URL = "tcp://127.0.0.1:1234"
     DOCKER_DEAMON_BASE_URL = "unix://var/run/docker.sock"
 
-    # setting this to false will allow re-use of cached Docker images
+    # setting this to false will allow re-use of cached Docker images (useful mainly for quicker debugging of master load script)
     DOCKER_FORCE_FRESH_PULL = True
 
 

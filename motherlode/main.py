@@ -85,7 +85,7 @@ def clean_up_container(name):
 
 
 def get_sorted_data_sources(datasources_unsorted):
-    """Returns the data sources sorted by dependecies and filters out non environemnt relevant datasources
+    """Returns the data sources sorted by dependencies and filters out datasources not relevant for the current environment
     
     """
     sorted_datasources = []
@@ -171,13 +171,26 @@ def run_datasource_containers():
 
     log.info("force pull? {}".format(config.DOCKER_FORCE_FRESH_PULL))
 
-    for datasource in get_sorted_data_sources(DataSourcesRegistry):
+    sorted_datasources = get_sorted_data_sources(DataSourcesRegistry)
+    # iniitalize load status list; we use this to determine whether all prerequisites have been met for loading a datasource
+    load_status =  { ds["name"]: None for ds in sorted_datasources }
+    log.info("load_status: {}".format(load_status))
 
+    for datasource in sorted_datasources:
         envs = env_vars.copy()
         if "envs" in datasource:
             envs.update(datasource["envs"])
         log.info("###########################".format(datasource["dockerimage"]))
         container_name = "ML_{}".format(datasource["name"])
+        log.info("[{}]: checking dependencies: {}".format(datasource["name"], datasource["dependencies"]))
+        # check whether all dependencies are satisfied
+        all_deps_fulfilled = True
+        for dep in datasource["dependencies"]:
+            if load_status[dep] != 0:
+                log.warning("dependency {} not fulfilled, skipping.".format(dep))
+                all_deps_fulfilled = False
+        if not all_deps_fulfilled:
+            continue
         log.info("Run Datasource container '{}'...".format(datasource["dockerimage"]))
 
         clean_up_container(container_name)
@@ -218,7 +231,7 @@ def run_datasource_containers():
 
         log_file = open(log_file_path, "a")
         log_file.write("================================================")
-        log_file.write("EXITED with status: {}".format(res))
+        log_file.write("EXITED with status: {}".format(res["StatusCode"]))
         log_file.close()
         log.info("[{}]: Finished with Exit Code:".format(res["StatusCode"]))
         if res["StatusCode"] != 0 and not config.CONTINUE_WHEN_ONE_DATALOADER_FAILS:
@@ -226,6 +239,7 @@ def run_datasource_containers():
             exit(res["StatusCode"])
         else:
             create_log_node(dataloader_name=datasource["name"], image=image)
+            load_status[datasource["name"]] = res["StatusCode"]
 
 
 if __name__ == "__main__":
