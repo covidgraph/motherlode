@@ -48,5 +48,5 @@ Motherlode uses the [Docker SDK for python](https://docker-py.readthedocs.io/en/
 
 ### Registry
 
-There is a files in the repo that serves as registry for dataloader at https://github.com/covidgraph/motherlode/blob/master/motherlode/data_sources_registry.py 
+There is a file in the repo that serves as registry for dataloader at https://github.com/covidgraph/motherlode/blob/master/motherlode/data_sources_registry.py 
 
