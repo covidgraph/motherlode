@@ -5,13 +5,21 @@ Pipeline for running all dataloader scripts for covidgraph in a controlled manne
 
 Maintainer: Tim Bleimehl @tim.bleimehl:meet.dzd-ev.de https://github.com/motey
 
+# TL; DR
+Run the complete pipeline against your own DB:
+* ```cp env/DEFAULT.env env/myconf.env```
+* change the DB connection in env/myconf.env
+* run
+```
+ENV=myconf python main.py
+```
 
 
 # What?
 
 covidgraph.org is a project with the aim to build a knowledge graph around data concerning covid-19. For details go to https://covidgraph.org
 
-The graph is fed by many independet scripts or scripts that are building on each other (called **dataloaders** here)
+The graph is fed by many independent scripts or scripts that are building on each other (called **dataloaders** here)
 
 Motherlode helps to run these dataloaders in the correct sequence.
 
@@ -19,7 +27,7 @@ Scope of Motherlode is
 
 * Resolving dependencies of dataloaders
 
-* Keep track of which dataloaders are allready fed in the graph
+* Keep track of which dataloaders are already fed in the graph
 
 * Keep track of versions of the dataloaders (and rerun if updated)
 
@@ -40,5 +48,5 @@ Motherlode uses the [Docker SDK for python](https://docker-py.readthedocs.io/en/
 
 ### Registry
 
-There is a files in the repo that serves as registry for dataloader at https://github.com/covidgraph/motherlode/blob/master/motherlode/data_sources_registry.py 
+There is a file in the repo that serves as registry for dataloader at https://github.com/covidgraph/motherlode/blob/master/motherlode/data_sources_registry.py 
 

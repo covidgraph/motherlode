@@ -85,7 +85,7 @@ def clean_up_container(name):
 
 
 def get_sorted_data_sources(datasources_unsorted):
-    """Returns the data sources sorted by dependecies and filters out non environemnt relevant datasources
+    """Returns the data sources sorted by dependencies and filters out datasources not relevant for the current environment
     
     """
     sorted_datasources = []
@@ -132,12 +132,14 @@ def get_sorted_data_sources(datasources_unsorted):
     return sorted_datasources
 
 
-def pull_image(image_name):
+def pull_image(image_name, force = True):
     log.info("Pull image '{}'...".format(image_name))
-    try:
-        docker_client.images.remove(image_name)
-    except docker.errors.ImageNotFound:
-        pass
+    if force:
+        log.info("... pull forced, removing old image")
+        try:
+            docker_client.images.remove(image_name)
+        except docker.errors.ImageNotFound:
+            pass
     docker_client.images.pull(image_name, tag="latest")
     log.info("...image '{}' pulled.".format(image_name))
 
@@ -167,25 +169,42 @@ def run_datasource_containers():
         env_vars["GC_NEO4J_PASSWORD"] = config.NEO4J_PASSWORD
     env_vars.update(config.OTHER_ENV_IN_DOCKER_CONTAINERS.items())
 
-    for datasource in get_sorted_data_sources(DataSourcesRegistry):
+    log.info("force pull? {}".format(config.DOCKER_FORCE_FRESH_PULL))
 
+    sorted_datasources = get_sorted_data_sources(DataSourcesRegistry)
+    # iniitalize load status list; we use this to determine whether all prerequisites have been met for loading a datasource
+    load_status =  { ds["name"]: None for ds in sorted_datasources }
+    log.info("load_status: {}".format(load_status))
+
+    for datasource in sorted_datasources:
         envs = env_vars.copy()
         if "envs" in datasource:
             envs.update(datasource["envs"])
         log.info("###########################".format(datasource["dockerimage"]))
         container_name = "ML_{}".format(datasource["name"])
+        log.info("[{}]: checking dependencies: {}".format(datasource["name"], datasource["dependencies"]))
+        # check whether all dependencies are satisfied
+        all_deps_fulfilled = True
+        for dep in datasource["dependencies"]:
+            if load_status[dep] != 0:
+                log.warning("dependency {} not fulfilled, skipping.".format(dep))
+                all_deps_fulfilled = False
+        if not all_deps_fulfilled:
+            continue
         log.info("Run Datasource container '{}'...".format(datasource["dockerimage"]))
 
         clean_up_container(container_name)
-        pull_image(datasource["dockerimage"])
+        pull_image(datasource["dockerimage"], config.DOCKER_FORCE_FRESH_PULL)
 
         image = docker_client.images.get(datasource["dockerimage"])
         log.info("'{}' using image '{}'".format(image.tags[0], image.id))
+        log.info("  envs: {}".format(envs))
+
         log_nodes = get_log_nodes(datasource["name"], image)
         if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
-            # we skip this dataloader as it allready did a run
+            # we skip this dataloader as it already did a run
             log.info(
-                "[{}]: Skip Dataloader. Did allready run at {}".format(
+                "[{}]: Skip Dataloader. Did already run at {}".format(
                     datasource["name"], log_nodes[0]["loading_finished_at"]
                 )
             )
@@ -212,7 +231,7 @@ def run_datasource_containers():
 
         log_file = open(log_file_path, "a")
         log_file.write("================================================")
-        log_file.write("EXITED with status: {}".format(res))
+        log_file.write("EXITED with status: {}".format(res["StatusCode"]))
         log_file.close()
         log.info("[{}]: Finished with Exit Code:".format(res["StatusCode"]))
         if res["StatusCode"] != 0 and not config.CONTINUE_WHEN_ONE_DATALOADER_FAILS:
@@ -220,6 +239,7 @@ def run_datasource_containers():
             exit(res["StatusCode"])
         else:
             create_log_node(dataloader_name=datasource["name"], image=image)
+            load_status[datasource["name"]] = res["StatusCode"]
 
 
 if __name__ == "__main__":
