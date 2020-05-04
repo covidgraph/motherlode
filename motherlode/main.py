@@ -80,7 +80,10 @@ def clean_up_container(name):
             c.kill()
         except docker.errors.APIError:
             pass
-        c.remove()
+        try:
+            c.remove()
+        except docker.errors.APIError:
+            pass
     except docker.errors.NotFound:
         pass
 
@@ -223,6 +226,7 @@ def run_datasource_containers():
                 detach=True,
                 name=container_name,
                 volumes=absolute_volume_path(datasource["volumes"]),
+                auto_remove=True,
             )
             log_file_path = os.path.join(
                 config.LOADING_LOGS_DIRECTORY, "{}.log".format(datasource["name"])
