@@ -3,6 +3,7 @@ import sys
 import logging
 import docker
 import py2neo
+from linetimer import CodeTimer
 from atexit import register
 from Configs import getConfig
 import datetime
@@ -182,37 +183,40 @@ def run_datasource_containers():
         image = docker_client.images.get(datasource["dockerimage"])
         log.info("'{}' using image '{}'".format(image.tags[0], image.id))
         log_nodes = get_log_nodes(datasource["name"], image)
-        if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
-            # we skip this dataloader as it allready did a run
-            log.info(
-                "[{}]: Skip Dataloader. Did allready run at {}".format(
-                    datasource["name"], log_nodes[0]["loading_finished_at"]
+        timer = CodeTimer("Timer", unit="m", silent=True)
+        with timer:
+            if log_nodes and not config.FORCE_RERUN_PASSED_DATALOADERS:
+                # we skip this dataloader as it allready did a run
+                log.info(
+                    "[{}]: Skip Dataloader. Did allready run at {}".format(
+                        datasource["name"], log_nodes[0]["loading_finished_at"]
+                    )
                 )
-            )
-            continue
+                continue
 
-        container = docker_client.containers.run(
-            image,
-            environment=envs,
-            detach=True,
-            name=container_name,
-            volumes=absolute_volume_path(datasource["volumes"]),
-        )
-        log_file_path = os.path.join(
-            config.LOADING_LOGS_DIRECTORY, "{}.log".format(datasource["name"])
-        )
-        for l in container.logs(
-            stream=True, timestamps=True, follow=True, stderr=True, stdout=True
-        ):
-            log.info("[{}]: {}".format(datasource["name"], l.decode()))
-            log_file = open(log_file_path, "a")
-            log_file.write(l.decode())
-            log_file.close()
-        res = container.wait()
+            container = docker_client.containers.run(
+                image,
+                environment=envs,
+                detach=True,
+                name=container_name,
+                volumes=absolute_volume_path(datasource["volumes"]),
+            )
+            log_file_path = os.path.join(
+                config.LOADING_LOGS_DIRECTORY, "{}.log".format(datasource["name"])
+            )
+            for l in container.logs(
+                stream=True, timestamps=True, follow=True, stderr=True, stdout=True
+            ):
+                log.info("[{}]: {}".format(datasource["name"], l.decode()))
+                log_file = open(log_file_path, "a")
+                log_file.write(l.decode())
+                log_file.close()
+            res = container.wait()
 
         log_file = open(log_file_path, "a")
         log_file.write("================================================")
         log_file.write("EXITED with status: {}".format(res))
+        log_file.write("TIME TOOK: {} minutes".format(timer.took))
         log_file.close()
         log.info("[{}]: Finished with Exit Code:".format(res["StatusCode"]))
         if res["StatusCode"] != 0 and not config.CONTINUE_WHEN_ONE_DATALOADER_FAILS:
