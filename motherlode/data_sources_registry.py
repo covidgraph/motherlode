@@ -59,4 +59,12 @@ DataSourcesRegistry = [
         "envs": {},
         "volumes": {}
     },
+    {
+        "name": "CLINICAL_TRIALS_GOV",
+        "dockerimage": "covidgraph/data-clinical_trials_gov",
+        "dependencies": [],
+        "exlude_in_env": [],
+        "envs": {},
+        "volumes": {}
+    },
 ]
