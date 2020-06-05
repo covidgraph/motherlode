@@ -67,4 +67,12 @@ DataSourcesRegistry = [
         "envs": {},
         "volumes": {}
     },
+    {
+        "name": "HELOMICS_HETIONET",
+        "dockerimage": "helomics/data_hetionet",
+        "dependencies": [],
+        "exlude_in_env": [],
+        "envs": {},
+        "volumes": {}
+    },
 ]
