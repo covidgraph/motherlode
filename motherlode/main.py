@@ -251,9 +251,9 @@ def run_datasource_containers():
         if res["StatusCode"] != 0 and not config.CONTINUE_WHEN_ONE_DATALOADER_FAILS:
             log.error("[{}]: Cancel Motherlode:".format(datasource["name"]))
             exit(res["StatusCode"])
-        elif res["StatusCode"] != 0:
+        elif res["StatusCode"] == 0:
             create_log_node(dataloader_name=datasource["name"], image=image)
-            load_status[datasource["name"]] = res["StatusCode"]
+        load_status[datasource["name"]] = res["StatusCode"]
 
 
 if __name__ == "__main__":
