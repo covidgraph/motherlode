@@ -205,8 +205,9 @@ def run_datasource_containers():
 
         clean_up_container(container_name)
         pull_image(datasource["dockerimage"], config.DOCKER_FORCE_FRESH_PULL)
-        image_docker_hub_id_short = docker_client.image.get_registry_data(image.tags[0])
+
         image = docker_client.images.get(datasource["dockerimage"])
+        image_docker_hub_id_short = docker_client.image.get_registry_data(image.tags[0])
         log.info(
             "'{}' using image '{}'".format(image.tags[0], image_docker_hub_id_short)
         )
