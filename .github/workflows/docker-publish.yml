@@ -18,6 +18,6 @@ jobs:
     - name: Publish to Registry
       uses: HurricanKai/Publish-Docker-Github-Action@master
       with:
-        name: covidgraph/data-cord19
+        name: covidgraph/motherlode
         username: ${{ secrets.DZD_DOCKER_USERNAME }}
         password: ${{ secrets.DZD_DOCKER_PASSWORD }}
