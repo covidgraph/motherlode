@@ -37,10 +37,12 @@ def get_graph():
 
 def create_log_node(dataloader_name, image):
     n = py2neo.Node("LoadingLog")
+    reg_data = docker_client.images.get_registry_data(image.tags[0])
     n["loader"] = dataloader_name
     n["dockerhub_image_name"] = image.tags[0].split(":")[0]
     n["dockerhub_image_tag"] = image.tags[0].split(":")[1]
-    n["dockerhub_image_hash"] = image.id
+    n["dockerhub_image_hash"] = reg_data.id
+    n["dockerhub_short_image_hash"] = reg_data.short_id
     n["loading_finished_at"] = str(datetime.datetime.now(tz=None))
     tx = get_graph().begin()
     tx.create(n)
@@ -249,7 +251,7 @@ def run_datasource_containers():
         if res["StatusCode"] != 0 and not config.CONTINUE_WHEN_ONE_DATALOADER_FAILS:
             log.error("[{}]: Cancel Motherlode:".format(datasource["name"]))
             exit(res["StatusCode"])
-        else:
+        elif res["StatusCode"] != 0:
             create_log_node(dataloader_name=datasource["name"], image=image)
             load_status[datasource["name"]] = res["StatusCode"]
 
