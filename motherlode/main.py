@@ -57,7 +57,7 @@ def get_log_nodes(dataloader_name, image):
             dockerhub_image_tag=image.tags[0].split(":")[1],
             dockerhub_image_hash=docker_client.images.get_registry_data(
                 image.tags[0]
-            ).short_id,
+            ).id,
         )
     )
 
@@ -211,7 +211,7 @@ def run_datasource_containers():
         image = docker_client.images.get(datasource["dockerimage"])
         image_docker_hub_id_short = docker_client.images.get_registry_data(
             image.tags[0]
-        )
+        ).short_id
         log.info(
             "'{}' using image '{}'".format(image.tags[0], image_docker_hub_id_short)
         )
