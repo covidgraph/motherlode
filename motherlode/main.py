@@ -227,6 +227,7 @@ def run_datasource_containers():
                         datasource["name"], log_nodes[0]["loading_finished_at"]
                     )
                 )
+                load_status[datasource["name"]] = 0
                 continue
 
             container = docker_client.containers.run(
