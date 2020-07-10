@@ -55,7 +55,9 @@ def get_log_nodes(dataloader_name, image):
             "LoadingLog",
             dockerhub_image_name=image.tags[0].split(":")[0],
             dockerhub_image_tag=image.tags[0].split(":")[1],
-            dockerhub_image_hash=image.id,
+            dockerhub_image_hash=docker_client.images.get_registry_data(
+                image.tags[0]
+            ).short_id,
         )
     )
 
@@ -207,7 +209,9 @@ def run_datasource_containers():
         pull_image(datasource["dockerimage"], config.DOCKER_FORCE_FRESH_PULL)
 
         image = docker_client.images.get(datasource["dockerimage"])
-        image_docker_hub_id_short = docker_client.images.get_registry_data(image.tags[0])
+        image_docker_hub_id_short = docker_client.images.get_registry_data(
+            image.tags[0]
+        )
         log.info(
             "'{}' using image '{}'".format(image.tags[0], image_docker_hub_id_short)
         )
