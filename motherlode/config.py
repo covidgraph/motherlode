@@ -32,6 +32,8 @@ class DEFAULT(ConfigBase):
     # setting this to false will allow re-use of cached Docker images (useful mainly for quicker debugging of master load script)
     DOCKER_FORCE_FRESH_PULL = True
 
+    SKIP_DEPENDENCY_CHECK = False
+
 
 # All following config classes inherit from DEFAULT
 class PROD(DEFAULT):

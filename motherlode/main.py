@@ -197,12 +197,13 @@ def run_datasource_containers():
         )
         # check whether all dependencies are satisfied
         all_deps_fulfilled = True
-        for dep in datasource["dependencies"]:
-            if load_status[dep] != 0:
-                log.warning("dependency {} not fulfilled, skipping.".format(dep))
-                all_deps_fulfilled = False
-        if not all_deps_fulfilled:
-            continue
+        if not config.SKIP_DEPENDENCY_CHECK:
+            for dep in datasource["dependencies"]:
+                if load_status[dep] != 0:
+                    log.warning("dependency {} not fulfilled, skipping.".format(dep))
+                    all_deps_fulfilled = False
+            if not all_deps_fulfilled:
+                continue
         log.info("Run Datasource container '{}'...".format(datasource["dockerimage"]))
 
         clean_up_container(container_name)
