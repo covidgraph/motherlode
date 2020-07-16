@@ -1,7 +1,3 @@
-
-
-
-
 DataSourcesRegistry = [
     {
         "name": "JHU",
@@ -9,7 +5,7 @@ DataSourcesRegistry = [
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {}
+        "volumes": {},
     },
     {
         "name": "CELLMAP",
@@ -17,15 +13,15 @@ DataSourcesRegistry = [
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {}
+        "volumes": {},
     },
     {
         "name": "CELLMAP_ANNOTATION",
         "dockerimage": "covidgraph/cellmap_data_annotation",
-        "dependencies": ['CELLMAP'],
+        "dependencies": ["CELLMAP"],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {}
+        "volumes": {},
     },
     {
         "name": "LENS_PATENT_DATA",
@@ -33,23 +29,25 @@ DataSourcesRegistry = [
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {'./dataset/LENS_PATENT_DATA': {'bind': '/app/dataset', 'mode': 'rw'}}
+        "volumes": {
+            "./dataset/LENS_PATENT_DATA": {"bind": "/app/dataset", "mode": "rw"}
+        },
     },
     {
         "name": "CORD19",
         "dockerimage": "covidgraph/data-cord19",
         "dependencies": [],
         "exlude_in_env": [],
-        "envs": {"CONFIGS_PAPER_BATCH_SIZE":"300", "CONFIGS_NO_OF_PROCESSES":"25"},
-        "volumes": {'./dataset/CORD19': {'bind': '/app/dataset', 'mode': 'rw'}}
+        "envs": {"CONFIGS_PAPER_BATCH_SIZE": "300", "CONFIGS_NO_OF_PROCESSES": "25"},
+        "volumes": {"./dataset/CORD19": {"bind": "/app/dataset", "mode": "rw"}},
     },
     {
         "name": "TEXT_FRAGGER",
         "dockerimage": "covidgraph/graph-processing_fragmentize_text",
-        "dependencies": ["CORD19","LENS_PATENT_DATA"],
+        "dependencies": ["CORD19", "LENS_PATENT_DATA"],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {}
+        "volumes": {},
     },
     {
         "name": "TEXT_GENE_MATCH",
@@ -57,7 +55,7 @@ DataSourcesRegistry = [
         "dependencies": ["CORD19", "LENS_PATENT_DATA", "CELLMAP", "TEXT_FRAGGER"],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {}
+        "volumes": {},
     },
     {
         "name": "CLINICAL_TRIALS_GOV",
@@ -65,7 +63,7 @@ DataSourcesRegistry = [
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {}
+        "volumes": {},
     },
     {
         "name": "HELOMICS_HETIONET",
@@ -73,6 +71,14 @@ DataSourcesRegistry = [
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {},
-        "volumes": {}
+        "volumes": {},
+    },
+    {
+        "name": "BIOBERT",
+        "dockerimage": "tomasonjo/biobert-covidgraph",
+        "dependencies": ["CORD19"],
+        "exlude_in_env": [],
+        "envs": {},
+        "volumes": {},
     },
 ]
