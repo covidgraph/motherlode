@@ -50,6 +50,7 @@ def create_log_node(dataloader_name, image):
 
 
 def get_log_nodes(dataloader_name, image):
+    # NodeMatcher will fail with neo4j 4.x and py2neo 4.*
     return list(
         py2neo.NodeMatcher(get_graph()).match(
             "LoadingLog",
@@ -186,11 +187,13 @@ def run_datasource_containers():
 
     for datasource in sorted_datasources:
         envs = env_vars.copy()
-        if datasource["name"] in config.SKIP_DATALOADER_LIST:
-            continue
+
         if "envs" in datasource:
             envs.update(datasource["envs"])
-        log.info("###########################".format(datasource["dockerimage"]))
+        log.info("###########################{}".format(datasource["dockerimage"]))
+        if datasource["name"] in config.SKIP_DATALOADER_LIST:
+            log.info("Skip because of value in config.SKIP_DATALOADER_LIST")
+            continue
         container_name = "ML_{}".format(datasource["name"])
         log.info(
             "[{}]: checking dependencies: {}".format(
