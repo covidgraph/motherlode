@@ -186,6 +186,8 @@ def run_datasource_containers():
 
     for datasource in sorted_datasources:
         envs = env_vars.copy()
+        if datasource["name"] in config.SKIP_DATALOADER_LIST:
+            continue
         if "envs" in datasource:
             envs.update(datasource["envs"])
         log.info("###########################".format(datasource["dockerimage"]))
