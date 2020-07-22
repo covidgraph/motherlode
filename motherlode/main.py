@@ -254,7 +254,11 @@ def run_datasource_containers():
                 log_file = open(log_file_path, "a")
                 log_file.write(l.decode())
                 log_file.close()
-            res = container.wait()
+            try:
+                res = container.wait()
+            except:
+                # container allready shut down. this can happen when exiting happens very fast
+                pass
 
         log_file = open(log_file_path, "a")
         log_file.write("================================================")
