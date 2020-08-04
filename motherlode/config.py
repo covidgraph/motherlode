@@ -26,6 +26,8 @@ class DEFAULT(ConfigBase):
     # similar to DATALOADER_LIST but only to run a single dataloader. overrides DATALOADER_LIST
     DATALOADER_SINGLE = None
 
+    SKIP_DATALOADER_LIST = []
+
     # DOCKER_DEAMON_BASE_URL = "tcp://127.0.0.1:1234"
     DOCKER_DEAMON_BASE_URL = "unix://var/run/docker.sock"
 
