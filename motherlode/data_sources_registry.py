@@ -1,5 +1,13 @@
 DataSourcesRegistry = [
     {
+        "name": "CREATE_FULL_TEXT_INDEXES",
+        "dockerimage": "covidgraph/graph-processing-fulltext-indexes:latest",
+        "dependencies": [],
+        "exlude_in_env": [],
+        "envs": {},
+        "volumes": {},
+    },
+    {
         "name": "JHU",
         "dockerimage": "covidgraph/data_jhu_population",
         "dependencies": [],
