@@ -1,7 +1,7 @@
 DataSourcesRegistry = [
     {
         "name": "CREATE_FULL_TEXT_INDEXES",
-        "dockerimage": "covidgraph/graph-processing-fulltext-indexes:latest",
+        "dockerimage": "covidgraph/graph-processing-fulltext-indexes",
         "dependencies": [],
         "exlude_in_env": [],
         "envs": {},
