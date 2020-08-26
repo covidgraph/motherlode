@@ -5,15 +5,6 @@ Pipeline for running all dataloader scripts for covidgraph in a controlled manne
 
 Maintainer: Tim Bleimehl @tim.bleimehl:meet.dzd-ev.de https://github.com/motey
 
-# TL; DR
-Run the complete pipeline against your own DB:
-* ```cp env/DEFAULT.env env/myconf.env```
-* change the DB connection in env/myconf.env
-* run
-```
-ENV=myconf python main.py
-```
-
 
 # What?
 
@@ -33,20 +24,14 @@ Scope of Motherlode is
 
 # How?
 
-## Dataloaders
 
-The format Motherlode accepts dataloaders is only as docker images from a registry (DockerHub only atm)
+## Pipeline
+
+Have a look at pipeline.yaml which is the pipeline definition. based on [copili](https://git.connect.dzd-ev.de/dzdtools/pythonmodules/-/tree/master/copili) and [motherlode](https://git.connect.dzd-ev.de/dzdtools/motherlode) written by the DZD
+
+## Dataloaders / Pipeline Members
+
+The format Motherlode accepts dataloaders is only as docker images from a registry (e.g. [DockerHub](https://hub.docker.com/))
 Motherlode will run these images as containers an handle over some ENV variables to help dataloaders to connect to the database. 
 
 For details have a look in at the dataloader template which comes as a python dataloader example: https://github.com/covidgraph/data_template
-
-## Mechanism
-
-### Docker handling
-
-Motherlode uses the [Docker SDK for python](https://docker-py.readthedocs.io/en/stable/) to manage the images and containers
-
-### Registry
-
-There is a file in the repo that serves as registry for dataloader at https://github.com/covidgraph/motherlode/blob/master/motherlode/data_sources_registry.py 
-
