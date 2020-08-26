@@ -1,5 +1,0 @@
-docker
-linetimer
-# beta of py2neo becaue of https://github.com/technige/py2neo/issues/791
-py2neo==5.0b1
-git+https://git.connect.dzd-ev.de/dzdtools/pythonmodules.git#subdirectory=Configs

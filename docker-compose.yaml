@@ -1,0 +1,13 @@
+version: "3.7"
+# good "lets get started"-article
+# https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/
+services:
+  traefik:
+    image: "registry-gl.connect.dzd-ev.de:443/dzdtools/motherlode:stable"
+    environment: 
+        CONFIGS_NEO4J: ${NEO4J}
+        CONFIGS_GLOBAL_PIPELINE_ENV_VARS: ${NEO4J_LECAGY_PARAMS}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/pipeline.yaml:/data/pipeline.yaml
+      - ${PWD}/log:/log
