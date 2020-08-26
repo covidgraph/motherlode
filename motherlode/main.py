@@ -48,7 +48,7 @@ def create_log_node(dataloader_name, image):
     tx.create(n)
     tx.commit()
 
-
+# CREATE (l:LoadingLog{loader:'CORD19',dockerhub_image_name:'covidgraph/data-cord19',dockerhub_image_tag:'latest',dockerhub_image_hash:'sha256:df930143ed91f8bb48cea03b86c25f6e664e1798ebd06f60e62f448e31776e0c',dockerhub_short_image_hash:'sha256:df930143ed91',loading_finished_at:'2020-07-22 11:42:45.258507'})
 def get_log_nodes(dataloader_name, image):
     # NodeMatcher will fail with neo4j 4.x and py2neo 4.*
     return list(
