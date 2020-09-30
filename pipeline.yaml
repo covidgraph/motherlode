@@ -5,8 +5,8 @@ CovidGraphPipeline:
       image_repo: covidgraph/data_jhu_population
       dependencies:
         - CREATE_FULL_TEXT_INDEXES
-	- name: BIOBASE
-	  image_repo: covidgraph/data_biobase
+    - name: BIOBASE
+      image_repo: covidgraph/data_biobase
     - name: LENS_PATENT_DATA
       image_repo: covidgraph/data-lens-org-covid19-patents
     - name: CORD19
