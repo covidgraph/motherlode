@@ -5,12 +5,8 @@ CovidGraphPipeline:
       image_repo: covidgraph/data_jhu_population
       dependencies:
         - CREATE_FULL_TEXT_INDEXES
-    - name: CELLMAP
-      image_repo: covidgraph/data_cellmap
-    - name: CELLMAP_ANNOTATION
-      image_repo: covidgraph/cellmap_data_annotation
-      dependencies:
-        - CELLMAP
+	- name: BIOBASE
+	  image_repo: covidgraph/data_biobase
     - name: LENS_PATENT_DATA
       image_repo: covidgraph/data-lens-org-covid19-patents
     - name: CORD19
@@ -28,7 +24,7 @@ CovidGraphPipeline:
       dependencies:
         - CORD19
         - LENS_PATENT_DATA
-        - CELLMAP
+        - BIOBASE
         - TEXT_FRAGGER
     - name: CLINICAL_TRIALS_GOV
       image_repo: covidgraph/data-clinical_trials_gov
