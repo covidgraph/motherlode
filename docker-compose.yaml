@@ -4,10 +4,12 @@ version: "3.7"
 services:
   traefik:
     image: "registry-gl.connect.dzd-ev.de:443/dzdtools/motherlode:stable"
+    network_mode: "host"
     environment: 
         CONFIGS_NEO4J: ${NEO4J}
         CONFIGS_GLOBAL_PIPELINE_ENV_VARS: ${NEO4J_LECAGY_PARAMS}
+        CONFIGS_DOCKER_NETWORK_MODE: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}/pipeline.yaml:/data/pipeline.yaml
-      - ${PWD}/log:/log
+      - ./pipeline.yaml:/data/pipeline.yaml
+      - ./log:/log
