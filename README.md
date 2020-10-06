@@ -53,6 +53,24 @@ To see what is happening, you can monitor logs with
 
 `docker-compose logs -f`
 
+### The Neo4j Connection string
+
+To provide connection details for the pipeline (and containers in the pipeline) we supply a json string via an environemt variable.
+
+The name of the environment variable is `NEO4J`.
+
+The json string can consist of all parameter described in https://py2neo.org/2020.0/database/index.html#individual-settings
+
+A common example for a local database would be 
+
+`NEO4J={"host":"localhost", "user":"neo4j","password":"mypw"}`
+
+A more complex example for a remote ssl secured database would be:
+
+`NEO4J={"host":"myremotehost.example.com", "port":10947, "user":"write-user","password":"mypw", "secure":True}`
+
+> **_NOTE:_**  *To see how to recieve/parse the string on client side see https://github.com/covidgraph/data_template#your-tasks-in-detail*
+
 ## Pipeline definition
 
 Have a look at pipeline.yaml which is the pipeline definition. based on [copili](https://git.connect.dzd-ev.de/dzdtools/pythonmodules/-/tree/master/copili) and [motherlode](https://git.connect.dzd-ev.de/dzdtools/motherlode) written by the DZD
@@ -62,7 +80,10 @@ Have a look at pipeline.yaml which is the pipeline definition. based on [copili]
 The format Motherlode accepts dataloaders is only as docker images from a registry (e.g. [DockerHub](https://hub.docker.com/))
 Motherlode will run these images as containers an handle over some ENV variables to help dataloaders to connect to the database. 
 
+
 For details have a look in at the dataloader template which comes as a python dataloader example: https://github.com/covidgraph/data_template
+
+
 
 ## Verify Pipeline runs
 
