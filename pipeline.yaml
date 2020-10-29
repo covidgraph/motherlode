@@ -31,6 +31,6 @@ CovidGraphPipeline:
     - name: HELOMICS_HETIONET
       image_repo: helomics/data_hetionet
     - name: BIOBERT
-      image_repo: tomasonjo/biobert-covidgraph
+      image_repo: covidgraph/data-biobert
       dependencies:
         - CORD19
