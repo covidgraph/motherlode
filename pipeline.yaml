@@ -1,36 +1,42 @@
 CovidGraphPipeline:
-    - name: CREATE_FULL_TEXT_INDEXES
-      image_repo: covidgraph/graph-processing-fulltext-indexes
-    - name: JHU
-      image_repo: covidgraph/data_jhu_population
-      dependencies:
-        - CREATE_FULL_TEXT_INDEXES
-    - name: BIOBASE
-      image_repo: covidgraph/data_biobase
-    - name: LENS_PATENT_DATA
-      image_repo: covidgraph/data-lens-org-covid19-patents
-    - name: CORD19
-      image_repo: covidgraph/data-cord19
-      env_vars:
-        CONFIGS_PAPER_BATCH_SIZE: 300
-        CONFIGS_NO_OF_PROCESSES: 25
-    - name: TEXT_FRAGGER
-      image_repo: covidgraph/graph-processing_fragmentize_text
-      dependencies:
-        - CORD19
-        - LENS_PATENT_DATA
-    - name: TEXT_GENE_MATCH
-      image_repo: covidgraph/graph-processing_text_gene_match
-      dependencies:
-        - CORD19
-        - LENS_PATENT_DATA
-        - BIOBASE
-        - TEXT_FRAGGER
-    - name: CLINICAL_TRIALS_GOV
-      image_repo: covidgraph/data-clinical_trials_gov
-    - name: HELOMICS_HETIONET
-      image_repo: helomics/data_hetionet
-    - name: BIOBERT
-      image_repo: covidgraph/data-biobert
-      dependencies:
-        - CORD19
+  - name: CREATE_FULL_TEXT_INDEXES
+    image_repo: covidgraph/graph-processing-fulltext-indexes
+  - name: JHU
+    image_repo: covidgraph/data_jhu_population
+    dependencies:
+      - CREATE_FULL_TEXT_INDEXES
+  - name: BIOBASE
+    image_repo: covidgraph/data_biobase
+  - name: LENS_PATENT_DATA
+    image_repo: covidgraph/data-lens-org-covid19-patents
+  - name: CORD19
+    image_repo: covidgraph/data-cord19
+    env_vars:
+      CONFIGS_PAPER_BATCH_SIZE: 300
+      CONFIGS_NO_OF_PROCESSES: 25
+  - name: TEXT_FRAGGER
+    image_repo: covidgraph/graph-processing_fragmentize_text
+    dependencies:
+      - CORD19
+      - LENS_PATENT_DATA
+  - name: TEXT_GENE_MATCH
+    image_repo: covidgraph/graph-processing_text_gene_match
+    dependencies:
+      - CORD19
+      - LENS_PATENT_DATA
+      - BIOBASE
+      - TEXT_FRAGGER
+  - name: CLINICAL_TRIALS_GOV
+    image_repo: covidgraph/data-clinical_trials_gov
+  - name: HELOMICS_HETIONET
+    image_repo: helomics/data_hetionet
+  - name: BIOBERT
+    image_repo: covidgraph/data-biobert
+    dependencies:
+      - CORD19
+  - name: MASYMOS
+    image_repo: covidgraph/data_masymos
+    env_vars:
+      SOURCE: ${MASYMOS_SOURCE_FILE}
+    dependencies:
+      - CORD19
