@@ -13,7 +13,8 @@ CovidGraphPipeline:
     image_repo: covidgraph/data-cord19
     env_vars:
       CONFIGS_PAPER_BATCH_SIZE: 300
-      CONFIGS_NO_OF_PROCESSES: 25
+      CONFIGS_NO_OF_PROCESSES: 12
+    volumes: { "/tmp/data/cord19": { "bind": "/app/dataset", "mode": "rw" } }
   - name: TEXT_FRAGGER
     image_repo: covidgraph/graph-processing_fragmentize_text
     dependencies:
