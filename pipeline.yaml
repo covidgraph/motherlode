@@ -6,7 +6,21 @@ CovidGraphPipeline:
     dependencies:
       - CREATE_FULL_TEXT_INDEXES
   - name: BIOBASE
-    image_repo: covidgraph/data_biobase
+    info_link: https://git.connect.dzd-ev.de/dzdconnectpipeline/dataloading_biobase
+    desc: Load different bio science repos into neo4j
+    image_repo: registry-gl.connect.dzd-ev.de:443/dzdconnectpipeline/dataloading_biobase
+    tag: prod
+    env_vars:
+      RUN_MODE: NotTest
+  - name: ONTOLOGIES
+    info_link: https://git.connect.dzd-ev.de/dzdconnectpipeline/dataloading_ontologies
+    desc: Load biomedical ontologies and mappings from biomedical entities to ontologies.
+    image_repo: registry-gl.connect.dzd-ev.de:443/dzdconnectpipeline/dataloading_ontologies
+    tag: prod
+    env_vars:
+      OBO_ONTOLOGIES: go,doid,mp,pato,hp
+    dependencies:
+      - BIOBASE
   - name: LENS_PATENT_DATA
     image_repo: covidgraph/data-lens-org-covid19-patents
   - name: CORD19
@@ -35,9 +49,9 @@ CovidGraphPipeline:
     image_repo: covidgraph/data-biobert
     dependencies:
       - CORD19
-  #- name: MASYMOS
-  #  image_repo: covidgraph/data_masymos
-  #  env_vars:
-  #    SOURCE: ${MASYMOS_SOURCE_FILE}
-  #  dependencies:
-  #    - CORD19
+  - name: MASYMOS
+    image_repo: covidgraph/data_masymos
+    env_vars:
+      SOURCE: ${MASYMOS_SOURCE_FILE}
+    dependencies:
+      - CORD19
