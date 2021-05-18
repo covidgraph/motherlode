@@ -34,9 +34,9 @@ CovidGraphPipeline:
     image_repo: covidgraph/data-biobert
     dependencies:
       - CORD19
-  #- name: MASYMOS
-  #  image_repo: covidgraph/data_masymos
-  #  env_vars:
-  #    SOURCE: ${MASYMOS_SOURCE_FILE}
-  #  dependencies:
-  #    - CORD19
+  - name: MASYMOS
+    image_repo: covidgraph/data_masymos
+    env_vars:
+      SOURCE: ${MASYMOS_SOURCE_FILE}
+    dependencies:
+      - CORD19
